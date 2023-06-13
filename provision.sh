@@ -38,7 +38,6 @@ fi
 #pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
 pip install -r requirements.txt
 
-
 # 设置mysql的root账户的密码为yourpassword
 # 创建名为twitter的数据库
 sudo mysql -u root << EOF
@@ -48,6 +47,7 @@ sudo mysql -u root << EOF
 	CREATE DATABASE IF NOT EXISTS twitter;
 EOF
 # fi
+
 # superuser名字
 USER="admin"
 # superuser密码
