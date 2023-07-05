@@ -17,6 +17,10 @@ class Tweet(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     #updated_at = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        index_together = (('user','created_at'),) #tuple 2元组，之后index会有很多所以会套括号
+        ordering = ('user', '-created_at') #排序规则不套括号了因为规则就一个
+
     @property
     def hours_to_now(self):
         #return (datetime.now() - self.created_at).seconds // 3600
