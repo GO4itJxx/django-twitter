@@ -13,6 +13,8 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+
+#import debug_toolbar
 from accounts.api.views import UserViewSet, AccountViewSet
 from comments.api.views import CommentViewSet
 from django.contrib import admin
@@ -20,8 +22,6 @@ from django.urls import include, path
 from rest_framework import routers
 from tweets.api.views import TweetViewSet
 
-
-#import debug_toolbar
 
 router = routers.DefaultRouter()
 #for only from accounts.api import views
@@ -36,5 +36,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include(router.urls)),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    #path('__debug__/', include(debug_toolbar.urls)).
+    #path('__debug__/', include(debug_toolbar.urls)),
 ]
