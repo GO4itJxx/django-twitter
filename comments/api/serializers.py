@@ -46,3 +46,16 @@ class CommentSerializerForCreate(serializers.ModelSerializer):
             tweet_id=validated_data['tweet_id'],
             content=validated_data['content'],
         )
+
+#不可以在CommentSerializerForCreate里创建update和destroy
+# 1.可以改的fields不同，tweet_id 和 user_id是不可更改的
+# 即便之后有些项目里可以改但不建议，因为分开之后做更新和修改会方便很多
+class CommentSerializerForUpdate(serializers.ModelSerializer):
+    class Meta:
+        model = Comment
+        fields = ('content',)
+    def update(self, instance, validated_data):
+         instance.content = validated_data['content']
+         instance.save()
+         # update 方法要求 return 修改后的 instance 作为返回值
+         return instance
