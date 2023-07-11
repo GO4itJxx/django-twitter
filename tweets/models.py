@@ -26,6 +26,10 @@ class Tweet(models.Model):
         #return (datetime.now() - self.created_at).seconds // 3600
         return (utc_now() - self.created_at).seconds // 3600
 
+    @property
+    def comments(self):
+        return self.comment_set.all()
+        # return Comment.objects.filter(tweet=self)
     def __str__(self):
         #这里是在执行print（tweet instance）的时候会显示的内容
         return f'{self.created_at} {self.user}: {self.content}'
