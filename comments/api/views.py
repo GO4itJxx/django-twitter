@@ -8,7 +8,7 @@ from comments.api.serializers import (
     CommentSerializerForUpdate,
 )
 from comments.api.permissions import IsObjectOwner
-
+from utils.decorators import required_params
 
 # 不要用ModelViewSet因为会默认增删改查但我们需要给用户limited权限
 class CommentViewSet(viewsets.GenericViewSet):
@@ -39,15 +39,16 @@ class CommentViewSet(viewsets.GenericViewSet):
             return [IsAuthenticated(), IsObjectOwner()]
         return [AllowAny()]
 
+    @required_params(params=['tweet_id'])
     def list(self,request, *args, **kwargs):
-        if 'tweet_id' not in request.query_params:
-            return Response(
-                {
-                    'message': 'Missing tweet_id in request',
-                    'success': False,
-                },
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        # if 'tweet_id' not in request.query_params:
+        #     return Response(
+        #         {
+        #             'message': 'Missing tweet_id in request',
+        #             'success': False,
+        #         },
+        #         status=status.HTTP_400_BAD_REQUEST,
+        #     )
         queryset = self.get_queryset()
         # 用prefetch_related（）先找到同样的user的id然后就取一个就可以，
         # 用created_related会left join，但当comment和user表单分开为2个独立表单时comment里不一定都会有user id
