@@ -1,19 +1,22 @@
-from django.db import models
+#friendships = Friendship.objects.filter(to_user=user).select_related('from user')
 
-# Create your models here.
+from django.db import models
 from django.contrib.auth.models import User
 #from datetime import datetime
 from utils.time_helpers import utc_now
+import uuid
 
 class Tweet(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+
     user = models.ForeignKey(
         User,
         on_delete=models.SET_NULL,
         null = True,
-        help_text= 'who posts this tweet',
+        #help_text= 'who posts this tweet',
         #verbose_name='HiTweeter'
     )
-    content = models.CharField(max_length = 255)
+    content = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
     #updated_at = models.DateTimeField(auto_now_add=True)
 
