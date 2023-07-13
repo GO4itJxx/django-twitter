@@ -41,7 +41,7 @@ class CommentApiTests(TestCase):
         # content太长不行
         response = self.jingxi_client.post(COMMENT_URL, {
             'tweet_id': self.tweet.id,
-            'content': '1' * 141
+            'content': '1' * 141,
         })
         self.assertEqual(response.status_code, 400)
         self.assertEqual('content' in response.data['errors'], True)
