@@ -7,6 +7,7 @@ from tweets.api.serializers import (
     TweetSerializerWithComments,)
 from tweets.models import Tweet
 from utils.decorators import required_params
+from newsfeeds.services import NewsFeedService
 
 class TweetViewSet(viewsets.GenericViewSet):
     """
@@ -65,4 +66,5 @@ class TweetViewSet(viewsets.GenericViewSet):
             }, status=400)
         #save will call create method in TweetSerializerForCreate
         tweet = serializer.save()
+        NewsFeedService.fanout_to_followers(tweet)
         return Response(TweetSerializer(tweet).data, status=201)

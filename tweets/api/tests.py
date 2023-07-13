@@ -13,7 +13,7 @@ class TweetApiTests(TestCase):
 
     def setUp(self):
 
-        self.user1 = self.create_user('user1', 'user1@jiuzhang.com')
+        self.user1 = self.create_user('user1', 'user1@qq.com')
         self.tweets1 = [
             self.create_tweet(self.user1)
             for i in range(3)
@@ -22,7 +22,7 @@ class TweetApiTests(TestCase):
         self.user1_client = APIClient()
         self.user1_client.force_authenticate(self.user1)
 
-        self.user2 = self.create_user('user2','user2@jiuzhang.com')
+        self.user2 = self.create_user('user2','user2@qq.com')
         self.tweets2 = [
             self.create_tweet(self.user2)
             for i in range(2)
@@ -41,8 +41,9 @@ class TweetApiTests(TestCase):
         response = self.anonymous_client.get(TWEET_LIST_API, {'user_id': self.user2.id})
         self.assertEqual(len(response.data['tweets']), 2)
         # 检测排序是按照新创建的在前面的顺序来的, 第0位的是后发的帖子，第1位的是前一个发的帖子
-        self.assertEqual(response.data['tweets'][0]['id'], self.tweets2[1].id)
-        self.assertEqual(response.data['tweets'][1]['id'], self.tweets2[0].id)
+        # 前者是unicode string后者是UUID，是不同的object所以要转换成一种，UUID转string
+        self.assertEqual(response.data['tweets'][0]['id'], str(self.tweets2[1].id))
+        self.assertEqual(response.data['tweets'][1]['id'], str(self.tweets2[0].id))
 
     def test_create_api(self):
         # 必须登录
