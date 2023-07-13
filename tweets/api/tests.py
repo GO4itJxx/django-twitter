@@ -31,6 +31,7 @@ class TweetApiTests(TestCase):
     def test_list_api(self):
         # 必须带 user_id
         response = self.anonymous_client.get(TWEET_LIST_API)
+        self.assertEqual(response.status_code, 400)
 
         #正常 request
         response = self.anonymous_client.get(TWEET_LIST_API, {'user_id': self.user1.id})

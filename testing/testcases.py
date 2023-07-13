@@ -4,6 +4,7 @@ from django.test import TestCase as DjangoTestCase
 from rest_framework.test import APIClient
 from tweets.models import Tweet
 
+
 class TestCase(DjangoTestCase):
 
     @property
