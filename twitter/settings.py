@@ -11,8 +11,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
 from pathlib import Path
-import sys
-#import pymysql
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -43,7 +42,6 @@ INSTALLED_APPS = [
     # third party pkgs
     'rest_framework',
     #'debug_toolbar',
-    #'django_filter',
     'django_filters',
 
     # project apps
@@ -146,7 +144,7 @@ USE_L10N = True
 
 USE_TZ = True
 
-DATA_UPLOAD_MAX_MEMORY_SIZE = 10485760 # 10MB in bytes
+# DATA_UPLOAD_MAX_MEMORY_SIZE = 10485760 # 10MB in bytes
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
@@ -158,28 +156,28 @@ except:
     pass
 
 # 设置存储用户上传文件的 storage 用什么系统
-DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-TESTING = ((" ".join(sys.argv)).find('manage.py test') != -1)
-if TESTING:
-    DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
+# DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+# TESTING = ((" ".join(sys.argv)).find('manage.py test') != -1)
+# if TESTING:
+#     DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
 
 
-AWS_STORAGE_BUCKET_NAME = 'rookieno1avatar'
-AWS_S3_REGION_NAME = 'us-east-2'
+#AWS_STORAGE_BUCKET_NAME = 'rookieno1avatar'
+#AWS_S3_REGION_NAME = 'us-east-2'
 
 
-CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.memcached.PyMemcacheCache',
-        #'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
-        'LOCATION': '127.0.0.1:11211',
-        'TIMEOUT': 86400,
-    },
-    'testing': {
-        'BACKEND': 'django.core.cache.backends.memcached.PyMemcacheCache',
-        #'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
-        'LOCATION': '127.0.0.1:11211',
-        'TIMEOUT': 86400,
-        'KEY_PREFIX': 'testing',
-    },
-}
+# CACHES = {
+#     'default': {
+#         'BACKEND': 'django.core.cache.backends.memcached.PyMemcacheCache',
+#         #'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+#         'LOCATION': '127.0.0.1:11211',
+#         'TIMEOUT': 86400,
+#     },
+#     'testing': {
+#         'BACKEND': 'django.core.cache.backends.memcached.PyMemcacheCache',
+#         #'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+#         'LOCATION': '127.0.0.1:11211',
+#         'TIMEOUT': 86400,
+#         'KEY_PREFIX': 'testing',
+#     },
+#}

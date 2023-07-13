@@ -9,33 +9,39 @@ from friendships.api.serializers import (
     FriendshipSerializerForCreate,
 )
 from django.contrib.auth.models import User
-from utils.paginations import FriendshipPagination
-
 
 class FriendshipViewSet(viewsets.GenericViewSet):
-
-    # Friendship.objects.all causes 404 be thrown
+    # I would like to POST /api/friendship/1/follow will follow user whose user_id=1
+    # Thus queryset need to be User.objects.all()
+    # If I use Friendship.objects.all, it will result in 404 Not Found
+    # because detail=True in actions, it will use get_object() first
+    # queryset.filter(pk=1) will check the object
     queryset = User.objects.all()
-    # define my own pagination
-    pagination_class = FriendshipPagination
+    serializer_class = FriendshipSerializerForCreate
 
     @action(methods=['GET'], detail=True, permission_classes=[AllowAny])
     def followers(self, request, pk):
-        friendship = Friendship.objects.filter(to_user_id=pk).order_by('-created_at')
-        page = self.paginate_queryset(friendship)
-        serializer = FollowerSerializer(page, many=True, context={'request': request})
-        return self.get_paginated_response(serializer.data)
+        # GET /api/friendships/1/followers
+        friendship = Friendship.objects.filter(to_user_id=pk)
+        serializer = FollowerSerializer(friendship, many=True)
+        return Response(
+            {'followers': serializer.data},
+            status=status.HTTP_200_OK,
+        )
 
     @action(methods=['GET'], detail=True, permission_classes=[AllowAny])
     def followings(self, request, pk):
         # GET /api/friendships/1/followers
-        friendship = Friendship.objects.filter(from_user_id=pk).order_by('-created_at')
-        page = self.paginate_queryset(friendship)
-        serializer = FollowingSerializer(page, many=True, context={'request': request})
-        return self.get_paginated_response(serializer.data)
+        friendship = Friendship.objects.filter(from_user_id=pk)
+        serializer = FollowingSerializer(friendship, many=True)
+        return Response(
+            {'followings': serializer.data},
+            status=status.HTTP_200_OK,
+        )
 
     @action(methods=['POST'], detail=True, permission_classes=[IsAuthenticated])
     def follow(self, request, pk):
+        follower_user = self.get_object()
         # if duplicate request
         # use silent processing
         if Friendship.objects.filter(from_user=request.user, to_user=pk).exists():
@@ -45,7 +51,7 @@ class FriendshipViewSet(viewsets.GenericViewSet):
             }, status=status.HTTP_201_CREATED)
         serializer = FriendshipSerializerForCreate(data={
             'from_user_id': request.user.id,
-            'to_user_id': pk,
+            'to_user_id': follower_user.id,
         })
         if not serializer.is_valid():
             return Response({
@@ -54,13 +60,14 @@ class FriendshipViewSet(viewsets.GenericViewSet):
             }, status=status.HTTP_400_BAD_REQUEST)
         instance = serializer.save()
         return Response(
-            FollowingSerializer(instance, context={'request': request}).data,
+            FollowingSerializer(instance).data,
             status=status.HTTP_201_CREATED
         )
 
     @action(methods=['POST'], detail=True, permission_classes=[IsAuthenticated])
     def unfollow(self, request, pk):
-        if request.user.id == int(pk):
+        unfollower_user = self.get_object()
+        if request.user.id == unfollower_user.id:
             return Response({
                 'success': False,
                 'message': 'You cannot unfollow yourself',
@@ -74,7 +81,7 @@ class FriendshipViewSet(viewsets.GenericViewSet):
         '''
         deleted, _ = Friendship.objects.filter(
             from_user=request.user,
-            to_user=pk,
+            to_user=unfollower_user,
         ).delete()
         return Response({'success': True, 'deleted': deleted})
 
